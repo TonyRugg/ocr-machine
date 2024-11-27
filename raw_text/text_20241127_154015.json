@@ -1,0 +1,63 @@
+{
+    "filename": "Pages23-0471_residential_code.pdf",
+    "timestamp": "2024-11-27T15:40:48.085123",
+    "total_pages": 7,
+    "total_tables": 2,
+    "total_diagrams": 2,
+    "total_tokens": 21872.0,
+    "pages": {
+        "1": {
+            "table": true,
+            "table_certainty": "1.0: The presence of structured rows and columns with data entries indicates a clear data table.",
+            "diagram": false,
+            "diagram_certainty": "null",
+            "page_number": 1,
+            "image_path": "/Users/tony/Documents/ocr-machine/images/page_1.png"
+        },
+        "2": {
+            "table": false,
+            "table_certainty": null,
+            "diagram": true,
+            "diagram_certainty": "0.9: The presence of 'Figure 307.4' suggests a technical diagram is included, likely illustrating blocking dimensions and materials.",
+            "page_number": 2,
+            "image_path": "/Users/tony/Documents/ocr-machine/images/page_2.png"
+        },
+        "3": {
+            "table": true,
+            "table_certainty": "0.9: The document contains a clear data table with specific headings and numerical values related to parking spaces and EV requirements.",
+            "diagram": false,
+            "diagram_certainty": "null",
+            "page_number": 3,
+            "image_path": "/Users/tony/Documents/ocr-machine/images/page_3.png"
+        },
+        "4": {
+            "table": false,
+            "table_certainty": null,
+            "diagram": false,
+            "diagram_certainty": null,
+            "page_number": 4
+        },
+        "5": {
+            "table": false,
+            "table_certainty": null,
+            "diagram": false,
+            "diagram_certainty": null,
+            "page_number": 5
+        },
+        "6": {
+            "table": false,
+            "table_certainty": null,
+            "diagram": true,
+            "diagram_certainty": "0.9: The image contains a technical diagram labeled 'FIGURE R602.61' which illustrates top plate framing to accommodate piping.",
+            "page_number": 6,
+            "image_path": "/Users/tony/Documents/ocr-machine/images/page_6.png"
+        },
+        "7": {
+            "table": false,
+            "table_certainty": null,
+            "diagram": false,
+            "diagram_certainty": null,
+            "page_number": 7
+        }
+    }
+}
