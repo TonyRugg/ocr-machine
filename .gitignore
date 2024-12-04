@@ -3,3 +3,6 @@ venv/
 .env
 **/__pycache__/
 **/*.pyc
+trainingSet.tar.zst
+**/*.ipynb
+testing/

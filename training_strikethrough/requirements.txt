@@ -1,0 +1,26 @@
+# System dependencies
+# sudo apt-get update
+# sudo apt-get install -y \
+#     python3-pip \
+#     python3-dev \
+#     python-is-python3
+
+# # For CUDA support (if using NVIDIA GPU)
+# sudo apt-get install -y nvidia-driver-535 nvidia-cuda-toolkit
+
+
+torch
+torchvision
+Pillow
+numpy
+tqdm
+
+# torch==2.2.0
+# torchvision==0.17.0
+# Pillow==10.2.0
+# numpy==1.24.3
+# tqdm==4.66.1
+
+
+
+# pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu121
