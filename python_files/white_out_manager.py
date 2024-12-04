@@ -1,8 +1,7 @@
-import fitz  # PyMuPDF
 from pdf2image import convert_from_path
-from PIL import Image, ImageDraw
+from PIL import ImageDraw
 
-def clean_pdf_with_removed_boxes(pdf_path, removed, output_pdf_path):
+def white_out_machine(pdf_path, removed, output_pdf_path):
     """
     Cleans a PDF by filling bounding boxes from the `removed` variable with white.
     
@@ -45,3 +44,17 @@ def clean_pdf_with_removed_boxes(pdf_path, removed, output_pdf_path):
         resolution=300
     )
     print(f"Cleaned PDF saved to: {output_pdf_path}")
+
+
+
+
+def white_out_parser(pdf_list, json_list):
+    '''
+    Takes the list of JSON responses from textract for table+diagram, diagram only and neither and feeds them to the strikethrough checker and white out machine.
+
+    Returns two flavor white out pdfs as well as their respective JSONs.  Also returns cropped table and diagrams with their respective JSONs
+    '''
+
+
+
+

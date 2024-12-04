@@ -3,6 +3,8 @@ import os
 import time
 import numpy as np
 import pdf2image
+from trp import Document
+from tqdm import tqdm
 
 def has_strikethrough(pdf_path, geometry, debug=False):
     """
@@ -140,84 +142,79 @@ def has_strikethrough(pdf_path, geometry, debug=False):
     return False
 
 
+def clean_response_with_strikethrough(response, pdf_path, debug=False):
+    """
+    Cleans a Textract response by removing words with strikethrough.
+    Uses textract-response-parser for easier document handling.
+    
+    Args:
+    response (dict): The Textract response dictionary
+    pdf_path (str): Path to the PDF file for strikethrough detection
+    debug (bool): If True, debug images will be saved by `has_strikethrough`
+
+    Returns:
+    tuple: (cleaned response dict, removed bounding boxes list)
+    """
+    # Convert response to Document object for easier handling
+    doc = Document(response)
+    removed = []  # List to store removed bounding boxes
+    removed_ids = set()  # Track removed block IDs
+    
+    # Create new blocks list
+    new_blocks = []
+    
+    for block in tqdm(response.get("Blocks", [])):
+        if block["BlockType"] == "WORD":
+            # Get page object to access orientation
+            page_num = block.get("Page", 1)
+            page = doc.pages[page_num - 1]
+            orientation = page.custom.get('PageOrientationBasedOnWords', 0)
+            
+            # Package geometry info into a dict
+            geometry = {
+                'bbox': block["Geometry"]["BoundingBox"],
+                'page_num': page_num - 1,  # Convert to 0-based indexing
+                'orientation': orientation
+            }
+            
+            has_strike = has_strikethrough( 
+                pdf_path=pdf_path,
+                geometry=geometry,
+                debug=debug
+            )
+            
+            if has_strike:
+                removed.append(block["Geometry"]["BoundingBox"])
+                removed_ids.add(block["Id"])
+                continue
+                
+        new_blocks.append(block)
+    
+    # Update relationships in remaining blocks
+    for block in new_blocks:
+        if "Relationships" in block:
+            updated_relationships = []
+            for relationship in block["Relationships"]:
+                if relationship["Type"] == "CHILD":
+                    # Filter out removed IDs from CHILD relationships
+                    relationship["Ids"] = [
+                        child_id for child_id in relationship["Ids"] 
+                        if child_id not in removed_ids
+                    ]
+                updated_relationships.append(relationship)
+            block["Relationships"] = updated_relationships
+
+    # Update response with cleaned blocks
+    response["Blocks"] = new_blocks
+    
+    return response, removed
 
 
+def strikethrough_manager():
+    '''
+    IS this top-level needed above the has_strikethrough?
+    Checks the page for strikethroughs and 
+    Returns a list of bounding boxes with true strikes to be removed
+    ?Should this also return a cleaned json with no strikes?
+    '''
 
-
-
-
-
-__doc__ = """
-Strikethrough Detection in PDF Word Regions
-
-This script defines a function, `has_strikethrough`, which detects whether a word region in a PDF contains a strikethrough line.
-It leverages computer vision techniques to analyze horizontal or vertical lines within specified bounding boxes on a page.
-
-Dependencies:
-    - OpenCV (cv2): For image processing and contour analysis.
-    - pdf2image: For converting PDF pages into images.
-    - NumPy: For numerical computations.
-    - time: For timestamp-based debugging.
-    - os: For directory management.
-
-Function:
-    has_strikethrough(pdf_path, geometry, debug=False):
-        Determines if a word region in a PDF page contains a strikethrough line.
-
-        Arguments:
-            - pdf_path (str): Path to the PDF file.
-            - geometry (dict): Dictionary containing the word's geometric information:
-                - 'bbox' (dict): Normalized bounding box with 'Left', 'Top', 'Width', 'Height'.
-                - 'page_num' (int): Zero-based page index.
-                - 'orientation' (float): Text orientation in degrees.
-            - debug (bool, optional): If True, saves intermediate debug images to the `debug_images` directory.
-
-        Returns:
-            - bool: True if a strikethrough line is detected, False otherwise.
-
-Implementation Details:
-    - The function extracts the specified word region from the PDF page using `pdf2image`.
-    - The word region undergoes preprocessing:
-        - Grayscale conversion and Gaussian blurring for noise reduction.
-        - Binary thresholding using Otsu's method to highlight text and lines.
-    - Morphological operations:
-        - Closing is applied to connect broken text components.
-        - Opening with directional kernels is used to isolate potential strikethrough lines.
-    - Contour Analysis:
-        - Contours of potential lines are extracted and filtered based on geometric criteria:
-            - Orientation-specific thresholds for thickness, length, and position.
-            - Line density ensures detected lines are reasonably solid.
-
-Debug Mode:
-    - If `debug=True`, the function saves intermediate steps as images in the `debug_images` directory:
-        - Binary image (`binary_TIMESTAMP.png`)
-        - Post-closing image (`closed_binary_TIMESTAMP.png`)
-        - Detected lines image (`detected_lines_TIMESTAMP.png`)
-        - Debug output showing detected lines with bounding boxes.
-
-Usage:
-    - Import the `has_strikethrough` function:
-        ```python
-        from script_name import has_strikethrough
-        ```
-    - Call the function with the required arguments:
-        ```python
-        geometry = {
-            'bbox': {'Left': 0.1, 'Top': 0.2, 'Width': 0.4, 'Height': 0.1},
-            'page_num': 0,
-            'orientation': 0
-        }
-        result = has_strikethrough("path/to/pdf.pdf", geometry, debug=True)
-        print("Strikethrough detected:", result)
-        ```
-
-Output:
-    - Boolean indicating the presence of a strikethrough line.
-    - Debug images saved to the `debug_images` directory when `debug=True`.
-
-Notes:
-    - Assumes normalized coordinates for bounding boxes (as percentages of page width/height).
-    - Handles both horizontal and vertical text orientations.
-    - Requires the `pdf2image` library to be correctly configured with poppler utilities.
-
-"""

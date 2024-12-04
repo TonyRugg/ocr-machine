@@ -15,6 +15,9 @@ This is a pipeline to generate a trainingset and train a mobileNet model to reco
 - Inference can be handled to check and export to folders with **model_inference_test.py**
 - Streaming inference can be handled using **streaming_strikethrough_detector** which will accept the image and return a bool
 
+### Supporting Scripts
+- **study_mages.py** can be used to understand the dimensions of the text images in a folder to better sis=ze the pre-processing step of training
+
 ### Dataset Cold Storage
 - All data for the training dataset has been archived in the following way:
     - The image files for most of the dataset were deleted
@@ -25,4 +28,5 @@ This is a pipeline to generate a trainingset and train a mobileNet model to reco
 
 
 ##### Note
-I am unable to share this publicly because of the confidential nature of the training set.  Perhaps a new training set could be made from public domain data at some point.
+- Since adding the **__init__.py** files to the folders I have not gone through and adjusted the imports from "module" to ".module"
+- I am unable to share this publicly because of the confidential nature of the training set.  Perhaps a new training set could be made from public domain data at some point.

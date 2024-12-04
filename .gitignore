@@ -6,3 +6,7 @@ venv/
 trainingSet.tar.zst
 **/*.ipynb
 testing/
+raw_text/
+images/
+other/
+intermediate_files/
